@@ -9,3 +9,10 @@ RTTStamp_*.ini
 # 日志输出
 *.log
 logs/
+
+# 分发打包目录
+dist/
+
+# 图标预览临时文件
+icon_preview.png
+exe_icon_check.png

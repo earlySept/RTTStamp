@@ -9,6 +9,7 @@ set GAC=C:\Windows\Microsoft.NET\assembly
   -lib:"%GAC%\GAC_64\PresentationCore\v4.0_4.0.0.0__31bf3856ad364e35" ^
   -lib:"%GAC%\GAC_MSIL\WindowsBase\v4.0_4.0.0.0__31bf3856ad364e35" ^
   -lib:"%GAC%\GAC_MSIL\System.Xaml\v4.0_4.0.0.0__b77a5c561934e089" ^
+  -win32icon:image/icon/app.ico ^
   -codepage:65001 RTTStamp.cs
 if errorlevel 1 (
   echo BUILD FAILED
