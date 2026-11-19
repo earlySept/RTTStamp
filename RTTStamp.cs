@@ -31,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using System.Globalization;
@@ -114,7 +115,8 @@ public class Settings
 
     public string EffectiveSaveDir()
     {
-        if (SaveDir.Length > 0) return SaveDir;
+        // 目录不存在（例如项目被整体移动过）时，回退到当前软件目录下的 logs
+        if (SaveDir.Length > 0 && Directory.Exists(SaveDir)) return SaveDir;
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
     }
 
@@ -190,6 +192,7 @@ public class ThemeColors
     public Brush WinBg, CardBg, CardBorder, LogBg, LogBorder;
     public Brush TextMain, TextSub, TsBrush, SysBrush, InfoBrush, DebugBrush, WarnBrush, ErrorBrush;
     public Brush NavBtnBg, NavBtnBorder, NavBtnFg;
+    public Brush CtrlBg, CtrlBorder, CtrlFg, HoverBg, Accent, SelBg;
     public bool Dark;
 
     static Brush B(byte r, byte g, byte b)
@@ -205,41 +208,53 @@ public class ThemeColors
         c.Dark = theme == 1;
         if (c.Dark)
         {
-            c.WinBg = B(20, 23, 28);
-            c.CardBg = B(30, 34, 41);
-            c.CardBorder = B(42, 47, 58);
-            c.LogBg = B(22, 25, 31);
-            c.LogBorder = B(42, 47, 58);
-            c.TextMain = B(214, 218, 226);
-            c.TextSub = B(154, 161, 174);
-            c.TsBrush = B(124, 130, 140);
-            c.SysBrush = B(224, 108, 117);
-            c.InfoBrush = B(152, 195, 121);
-            c.DebugBrush = B(86, 182, 194);
-            c.WarnBrush = B(229, 192, 123);
-            c.ErrorBrush = B(224, 108, 117);
-            c.NavBtnBg = B(38, 43, 52);
-            c.NavBtnBorder = B(58, 64, 78);
-            c.NavBtnFg = B(214, 218, 226);
+            c.WinBg = B(14, 20, 30);
+            c.CardBg = B(24, 32, 46);
+            c.CardBorder = B(38, 50, 72);
+            c.LogBg = B(18, 25, 38);
+            c.LogBorder = B(38, 50, 72);
+            c.TextMain = B(222, 230, 240);
+            c.TextSub = B(138, 151, 171);
+            c.TsBrush = B(100, 114, 139);
+            c.SysBrush = B(248, 113, 113);
+            c.InfoBrush = B(74, 222, 128);
+            c.DebugBrush = B(56, 189, 248);
+            c.WarnBrush = B(251, 191, 36);
+            c.ErrorBrush = B(248, 113, 113);
+            c.NavBtnBg = B(30, 38, 54);
+            c.NavBtnBorder = B(44, 58, 82);
+            c.NavBtnFg = B(222, 230, 240);
+            c.CtrlBg = B(26, 34, 48);
+            c.CtrlBorder = B(44, 58, 82);
+            c.CtrlFg = B(222, 230, 240);
+            c.HoverBg = B(36, 48, 68);
+            c.Accent = B(76, 141, 255);
+            c.SelBg = B(50, 66, 94);
         }
         else
         {
-            c.WinBg = B(239, 242, 247);
+            c.WinBg = B(240, 245, 243);
             c.CardBg = B(255, 255, 255);
-            c.CardBorder = B(220, 225, 234);
+            c.CardBorder = B(226, 232, 230);
             c.LogBg = B(255, 255, 255);
-            c.LogBorder = B(220, 225, 234);
-            c.TextMain = B(31, 36, 48);
-            c.TextSub = B(107, 114, 128);
-            c.TsBrush = B(138, 138, 138);
-            c.SysBrush = B(204, 41, 54);
-            c.InfoBrush = B(16, 124, 16);
-            c.DebugBrush = B(0, 119, 139);
-            c.WarnBrush = B(184, 134, 11);
-            c.ErrorBrush = B(204, 41, 54);
+            c.LogBorder = B(226, 232, 230);
+            c.TextMain = B(23, 37, 43);
+            c.TextSub = B(107, 122, 141);
+            c.TsBrush = B(148, 163, 184);
+            c.SysBrush = B(220, 38, 38);
+            c.InfoBrush = B(22, 163, 74);
+            c.DebugBrush = B(14, 154, 184);
+            c.WarnBrush = B(217, 119, 6);
+            c.ErrorBrush = B(220, 38, 38);
             c.NavBtnBg = B(245, 247, 250);
             c.NavBtnBorder = B(200, 205, 215);
-            c.NavBtnFg = B(31, 36, 48);
+            c.NavBtnFg = B(23, 37, 43);
+            c.CtrlBg = B(255, 255, 255);
+            c.CtrlBorder = B(201, 207, 217);
+            c.CtrlFg = B(23, 37, 43);
+            c.HoverBg = B(233, 237, 244);
+            c.Accent = B(59, 130, 246);
+            c.SelBg = B(189, 215, 238);
         }
         return c;
     }
@@ -481,7 +496,7 @@ static class ResLib
     <Setter Property=""Width"" Value=""42""/>
     <Setter Property=""Height"" Value=""30""/>
     <Setter Property=""Background"" Value=""Transparent""/>
-    <Setter Property=""Foreground"" Value=""#4A5060""/>
+    <Setter Property=""Foreground"" Value=""{DynamicResource Text.Main}""/>
     <Setter Property=""FontFamily"" Value=""Segoe MDL2 Assets""/>
     <Setter Property=""FontSize"" Value=""10""/>
     <Setter Property=""Cursor"" Value=""Hand""/>
@@ -493,10 +508,10 @@ static class ResLib
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property=""IsMouseOver"" Value=""True"">
-              <Setter TargetName=""bd"" Property=""Background"" Value=""#E2E6EE""/>
+              <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Hover.Bg}""/>
             </Trigger>
             <Trigger Property=""IsPressed"" Value=""True"">
-              <Setter TargetName=""bd"" Property=""Background"" Value=""#D2D8E2""/>
+              <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Ctrl.Border}""/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -523,11 +538,11 @@ static class ResLib
   </Style>
 
   <Style TargetType=""TextBox"">
-    <Setter Property=""Background"" Value=""#FFFFFF""/>
-    <Setter Property=""Foreground"" Value=""#1F2430""/>
-    <Setter Property=""CaretBrush"" Value=""#1F2430""/>
-    <Setter Property=""BorderBrush"" Value=""#C9CFD9""/>
-    <Setter Property=""SelectionBrush"" Value=""#4A90E2""/>
+    <Setter Property=""Background"" Value=""{DynamicResource Ctrl.Bg}""/>
+    <Setter Property=""Foreground"" Value=""{DynamicResource Ctrl.Fg}""/>
+    <Setter Property=""CaretBrush"" Value=""{DynamicResource Ctrl.Fg}""/>
+    <Setter Property=""BorderBrush"" Value=""{DynamicResource Ctrl.Border}""/>
+    <Setter Property=""SelectionBrush"" Value=""{DynamicResource Accent}""/>
     <Setter Property=""Padding"" Value=""6,3""/>
     <Setter Property=""Template"">
       <Setter.Value>
@@ -538,10 +553,113 @@ static class ResLib
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property=""IsKeyboardFocusWithin"" Value=""True"">
-              <Setter TargetName=""bd"" Property=""BorderBrush"" Value=""#4A90E2""/>
+              <Setter TargetName=""bd"" Property=""BorderBrush"" Value=""{DynamicResource Accent}""/>
             </Trigger>
             <Trigger Property=""IsEnabled"" Value=""False"">
-              <Setter TargetName=""bd"" Property=""Background"" Value=""#EEF0F4""/>
+              <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Hover.Bg}""/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType=""ComboBox"">
+    <Setter Property=""Foreground"" Value=""{DynamicResource Ctrl.Fg}""/>
+    <Setter Property=""Height"" Value=""26""/>
+    <Setter Property=""Template"">
+      <Setter.Value>
+        <ControlTemplate TargetType=""{x:Type ComboBox}"">
+          <Grid>
+            <ToggleButton x:Name=""ToggleButton"" Focusable=""False"" ClickMode=""Press""
+                          IsChecked=""{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType=""{x:Type ToggleButton}"">
+                  <Border x:Name=""bd"" Background=""{DynamicResource Ctrl.Bg}"" BorderBrush=""{DynamicResource Ctrl.Border}""
+                          BorderThickness=""1"" CornerRadius=""6"">
+                    <Path Data=""M 0 0 L 4 4 L 8 0 Z"" Fill=""{DynamicResource Text.Sub}"" HorizontalAlignment=""Right""
+                          VerticalAlignment=""Center"" Margin=""0,0,8,0""/>
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property=""IsMouseOver"" Value=""True"">
+                      <Setter TargetName=""bd"" Property=""BorderBrush"" Value=""{DynamicResource Accent}""/>
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+            </ToggleButton>
+            <ContentPresenter Margin=""8,4,24,4"" VerticalAlignment=""Center"" HorizontalAlignment=""Left"" IsHitTestVisible=""False""
+                              Content=""{TemplateBinding SelectionBoxItem}""
+                              ContentTemplate=""{TemplateBinding SelectionBoxItemTemplate}""
+                              ContentTemplateSelector=""{TemplateBinding ItemTemplateSelector}""/>
+            <TextBox x:Name=""PART_EditableTextBox"" Visibility=""Hidden"" Margin=""8,3,24,3"" VerticalAlignment=""Center""
+                     BorderThickness=""0"" Background=""Transparent"" Padding=""0""
+                     Foreground=""{DynamicResource Ctrl.Fg}"" CaretBrush=""{DynamicResource Ctrl.Fg}""/>
+            <Popup x:Name=""PART_Popup"" AllowsTransparency=""True"" Placement=""Bottom"" PopupAnimation=""Slide""
+                   IsOpen=""{TemplateBinding IsDropDownOpen}"">
+              <Border CornerRadius=""8"" Background=""{DynamicResource Card.Bg}"" BorderBrush=""{DynamicResource Ctrl.Border}""
+                      BorderThickness=""1"" Margin=""0,4,0,0"" MinWidth=""{TemplateBinding ActualWidth}"">
+                <ScrollViewer MaxHeight=""220"" VerticalScrollBarVisibility=""Auto"">
+                  <ItemsPresenter KeyboardNavigation.DirectionalNavigation=""Contained""/>
+                </ScrollViewer>
+              </Border>
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property=""IsEditable"" Value=""True"">
+              <Setter TargetName=""PART_EditableTextBox"" Property=""Visibility"" Value=""Visible""/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property=""ItemContainerStyle"">
+      <Setter.Value>
+        <Style TargetType=""{x:Type ComboBoxItem}"">
+          <Setter Property=""Template"">
+            <Setter.Value>
+              <ControlTemplate TargetType=""{x:Type ComboBoxItem}"">
+                <Border x:Name=""bd"" Padding=""10,5"" CornerRadius=""4"" Background=""Transparent"">
+                  <ContentPresenter VerticalAlignment=""Center""/>
+                </Border>
+                <ControlTemplate.Triggers>
+                  <Trigger Property=""IsMouseOver"" Value=""True"">
+                    <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Hover.Bg}""/>
+                  </Trigger>
+                  <Trigger Property=""IsSelected"" Value=""True"">
+                    <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Hover.Bg}""/>
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+        </Style>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType=""CheckBox"">
+    <Setter Property=""Foreground"" Value=""{DynamicResource Text.Main}""/>
+    <Setter Property=""Cursor"" Value=""Hand""/>
+    <Setter Property=""Template"">
+      <Setter.Value>
+        <ControlTemplate TargetType=""{x:Type CheckBox}"">
+          <StackPanel Orientation=""Horizontal"" VerticalAlignment=""Center"">
+            <Border x:Name=""bd"" Width=""15"" Height=""15"" CornerRadius=""4"" VerticalAlignment=""Center""
+                    Background=""{DynamicResource Ctrl.Bg}"" BorderBrush=""{DynamicResource Ctrl.Border}"" BorderThickness=""1"">
+              <Path x:Name=""chk"" Data=""M 2 7 L 6 11 L 12 3"" Stroke=""White"" StrokeThickness=""2"" Visibility=""Collapsed""
+                    StrokeStartLineCap=""Round"" StrokeEndLineCap=""Round""/>
+            </Border>
+            <ContentPresenter Margin=""6,0,0,0"" VerticalAlignment=""Center"" RecognizesAccessKey=""False""/>
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property=""IsChecked"" Value=""True"">
+              <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Accent}""/>
+              <Setter TargetName=""bd"" Property=""BorderBrush"" Value=""{DynamicResource Accent}""/>
+              <Setter TargetName=""chk"" Property=""Visibility"" Value=""Visible""/>
+            </Trigger>
+            <Trigger Property=""IsMouseOver"" Value=""True"">
+              <Setter TargetName=""bd"" Property=""BorderBrush"" Value=""{DynamicResource Accent}""/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -550,12 +668,36 @@ static class ResLib
   </Style>
 
   <DataTemplate x:Key=""LogRowTpl"">
-    <TextBlock FontFamily=""Consolas"" FontSize=""13"" Padding=""8,0"">
-      <Run Text=""{Binding TsText}"" Foreground=""{Binding TsBrush}""/>
-      <Run Text=""{Binding TagText}"" Foreground=""{Binding TagBrush}"" FontWeight=""Bold""/>
-      <Run Text=""{Binding BodyText}"" Foreground=""{Binding BodyBrush}""/>
-    </TextBlock>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width=""Auto""/>
+        <ColumnDefinition Width=""Auto""/>
+        <ColumnDefinition Width=""*""/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column=""0"" Text=""{Binding TsText}"" Foreground=""{Binding TsBrush}"" FontFamily=""Consolas"" Padding=""8,0,12,0""/>
+      <TextBlock Grid.Column=""1"" Text=""{Binding TagText}"" Foreground=""{Binding TagBrush}"" FontFamily=""Consolas"" FontWeight=""Bold"" Padding=""0,0,12,0""/>
+      <TextBlock Grid.Column=""2"" Text=""{Binding BodyText}"" Foreground=""{Binding BodyBrush}"" FontFamily=""Consolas""/>
+    </Grid>
   </DataTemplate>
+  <Style x:Key=""LogItemStyle"" TargetType=""{x:Type ListBoxItem}"">
+    <Setter Property=""Template"">
+      <Setter.Value>
+        <ControlTemplate TargetType=""{x:Type ListBoxItem}"">
+          <Border x:Name=""bd"" Background=""Transparent"" SnapsToDevicePixels=""True"">
+            <ContentPresenter/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property=""IsMouseOver"" Value=""True"">
+              <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Hover.Bg}""/>
+            </Trigger>
+            <Trigger Property=""IsSelected"" Value=""True"">
+              <Setter TargetName=""bd"" Property=""Background"" Value=""{DynamicResource Sel.Bg}""/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 </ResourceDictionary>";
 }
 
@@ -563,7 +705,8 @@ static class ResLib
 public class MainWindow : BaseWin
 {
     Settings S;
-    ThemeColors tc;
+    ThemeColors tc;      // 窗口界面配色（固定浅色，保证可读性）
+    ThemeColors tcLog;   // 日志区配色（跟随主题设置）
 
     // 控件
     Border rootBorder;
@@ -574,7 +717,10 @@ public class MainWindow : BaseWin
     StackPanel advPanel, findBar;
     Button btnConnect, btnClear, btnExport, btnFind, btnBrowseDir;
     Button btnMin, btnMax, btnClose, btnSettings, btnKeys, btnAbout;
-    ListBox logList;
+    RichTextBox rtb;
+    Border logBorder, stBorder;
+    Label lblDev, lblIf2, lblSpeed, lblTs2, lblDirTip, lblFindTip;
+    int findAnchorIdx = -1;
     TextBlock tbConn, tbDll, tbBytes, tbLines, tbClock, tbVer;
     System.Windows.Shapes.Ellipse dotConn;
 
@@ -610,6 +756,7 @@ public class MainWindow : BaseWin
         JLinkDll.SetDllDirectory(JLinkDll.DllDir);
         dllVer = JLinkDll.DllVersionText();
         tc = ThemeColors.Get(S.Theme);
+        tcLog = tc;
 
         Title = "RTTStamp v" + UiUtil.AppVersion() + " - J-Link RTT 日志查看器"
             + (Settings.IniSuffix.Length > 0 ? "  [" + Settings.IniSuffix.TrimStart('_') + "]" : "");
@@ -626,6 +773,7 @@ public class MainWindow : BaseWin
         BuildUI();
         ApplyTheme();
         LoadInitialValues();
+        HookLiveParams();
         PushSys("RTTStamp v" + UiUtil.AppVersion() + " 启动 | J-Link DLL " + dllVer + " | " + JLinkDll.DllDir);
 
         DispatcherTimer t = new DispatcherTimer();
@@ -648,7 +796,7 @@ public class MainWindow : BaseWin
         chkRealtime.IsChecked = S.RealtimeOn;
         txtDir.Text = S.EffectiveSaveDir();
         cmbTs.SelectedIndex = Math.Max(0, Math.Min(2, S.TsFormat));
-        logList.FontSize = S.FontSize;
+        rtb.Document.FontSize = S.FontSize;
         advPanel.Visibility = Visibility.Collapsed;
     }
 
@@ -865,15 +1013,15 @@ public class MainWindow : BaseWin
         g.ColumnDefinitions.Add(c3); g.ColumnDefinitions.Add(c4); g.ColumnDefinitions.Add(c5);
         g.ColumnDefinitions.Add(c6); g.ColumnDefinitions.Add(c7); g.ColumnDefinitions.Add(c8);
 
-        Label l1 = L("设备:", tc.TextSub); l1.Margin = new Thickness(0, 0, 8, 0); Grid.SetColumn(l1, 0); g.Children.Add(l1);
+        Label l1 = L("设备:", tc.TextSub); l1.Margin = new Thickness(0, 0, 8, 0); lblDev = l1; Grid.SetColumn(l1, 0); g.Children.Add(l1);
         cmbDevice = Combo(true); Grid.SetColumn(cmbDevice, 1);
         foreach (string d in DevicePresets) cmbDevice.Items.Add(d);
         g.Children.Add(cmbDevice);
-        Label l2 = L("接口:", tc.TextSub); l2.Margin = new Thickness(14, 0, 8, 0); Grid.SetColumn(l2, 2); g.Children.Add(l2);
+        Label l2 = L("接口:", tc.TextSub); l2.Margin = new Thickness(14, 0, 8, 0); lblIf2 = l2; Grid.SetColumn(l2, 2); g.Children.Add(l2);
         cmbIf = Combo(false); Grid.SetColumn(cmbIf, 3);
         cmbIf.Items.Add("SWD"); cmbIf.Items.Add("JTAG");
         g.Children.Add(cmbIf);
-        Label l3 = L("速率kHz:", tc.TextSub); l3.Margin = new Thickness(14, 0, 8, 0); Grid.SetColumn(l3, 4); g.Children.Add(l3);
+        Label l3 = L("速率kHz:", tc.TextSub); l3.Margin = new Thickness(14, 0, 8, 0); lblSpeed = l3; Grid.SetColumn(l3, 4); g.Children.Add(l3);
         cmbSpeed = Combo(true); Grid.SetColumn(cmbSpeed, 5);
         foreach (string sp in new string[] { "1000", "2000", "4000", "8000", "10000" }) cmbSpeed.Items.Add(sp);
         g.Children.Add(cmbSpeed);
@@ -894,7 +1042,7 @@ public class MainWindow : BaseWin
         ColumnDefinition c2 = new ColumnDefinition(); c2.Width = GridLength.Auto;
         g.ColumnDefinitions.Add(c0); g.ColumnDefinitions.Add(c1); g.ColumnDefinitions.Add(c2);
 
-        Label l = L("时间戳:", tc.TextSub); l.Margin = new Thickness(0, 0, 8, 0); Grid.SetColumn(l, 0); g.Children.Add(l);
+        Label l = L("时间戳:", tc.TextSub); l.Margin = new Thickness(0, 0, 8, 0); lblTs2 = l; Grid.SetColumn(l, 0); g.Children.Add(l);
         cmbTs = Combo(false); Grid.SetColumn(cmbTs, 1);
         cmbTs.Items.Add("年-月-日 时:分:秒.毫秒 (1970-01-01 01:01:01.001)");
         cmbTs.Items.Add("时:分:秒.毫秒 (01:01:01.001)");
@@ -988,9 +1136,10 @@ public class MainWindow : BaseWin
         chkRealtime.ToolTip = "开启后每条日志实时写入目录里的 real_log_*.log，清空窗口不影响";
         Grid.SetColumn(chkRealtime, 4); g.Children.Add(chkRealtime);
 
-        Label ldir = L("目录:", tc.TextSub); ldir.Margin = new Thickness(14, 0, 0, 0);
+        Label ldir = L("目录:", tc.TextSub); ldir.Margin = new Thickness(14, 0, 8, 0); lblDirTip = ldir;
         Grid.SetColumn(ldir, 5); g.Children.Add(ldir);
         txtDir = new TextBox(); Grid.SetColumn(txtDir, 7);
+        txtDir.ToolTip = "如需更改默认目录：设置 → 日志设置（默认为本程序目录下的 logs）";
         g.Children.Add(txtDir);
         btnBrowseDir = Pill("...", tc.CardBg, tc.TextMain, tc.CardBorder);
         btnBrowseDir.Padding = new Thickness(10, 4, 10, 4);
@@ -1008,7 +1157,7 @@ public class MainWindow : BaseWin
             Margin = new Thickness(10, 2, 10, 4),
             VerticalAlignment = VerticalAlignment.Center
         };
-        Label lf = L("查找:", tc.TextSub); p.Children.Add(lf);
+        Label lf = L("查找:", tc.TextSub); lblFindTip = lf; p.Children.Add(lf);
         txtFind = new TextBox { Width = 260, Margin = new Thickness(6, 0, 0, 0) };
         p.Children.Add(txtFind);
         CheckBox caseBox = new CheckBox { Content = "区分大小写", VerticalContentAlignment = VerticalAlignment.Center, Foreground = tc.TextMain, Margin = new Thickness(12, 0, 0, 0) };
@@ -1047,31 +1196,20 @@ public class MainWindow : BaseWin
         b.BorderThickness = new Thickness(1, 1, 1, 1);
         b.CornerRadius = new CornerRadius(8);
         b.Margin = new Thickness(10, 2, 10, 4);
-        b.Child = logList = new ListBox();
-        logList.Background = Brushes.Transparent;
-        logList.BorderThickness = new Thickness(0);
-        logList.FontSize = S.FontSize;
-        logList.FontFamily = new FontFamily(S.FontName.Length > 0 ? S.FontName : "Consolas");
-        logList.ItemTemplate = (DataTemplate)Application.Current.Resources["LogRowTpl"];
-        ScrollViewer.SetHorizontalScrollBarVisibility(logList, ScrollBarVisibility.Auto);
-        VirtualizingPanel.SetScrollUnit(logList, ScrollUnit.Pixel);
-        logList.AddHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(OnLogScroll));
-        logList.PreviewMouseWheel += new MouseWheelEventHandler(OnLogWheel);
-        logList.PreviewKeyDown += new KeyEventHandler(delegate(object s, KeyEventArgs e)
-        {
-            bool ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
-            if (ctrl && e.Key == Key.C)
-            {
-                CopySelected();
-                e.Handled = true;
-            }
-            else if (ctrl && e.Key == Key.A)
-            {
-                logList.SelectAll();
-                e.Handled = true;
-            }
-        });
-        b.ContextMenu = BuildLogContextMenu();
+        b.Child = rtb = new RichTextBox();
+        rtb.Background = Brushes.Transparent;
+        rtb.BorderThickness = new Thickness(0);
+        rtb.FontFamily = new FontFamily(S.FontName.Length > 0 ? S.FontName : "Consolas");
+        rtb.FontSize = S.FontSize;
+        rtb.Document.PagePadding = new Thickness(8, 4, 8, 4);
+        rtb.Document.PageWidth = 4000; // 页面固定较宽：长行不折行，横向滚动查看
+        rtb.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+        rtb.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+        rtb.SelectionBrush = tc.Accent;
+        rtb.SelectionOpacity = 0.4;
+        rtb.PreviewMouseWheel += new MouseWheelEventHandler(OnLogWheel);
+        rtb.ContextMenu = BuildLogContextMenu();
+        logBorder = b;
         return b;
     }
 
@@ -1082,7 +1220,7 @@ public class MainWindow : BaseWin
         miCopy.Click += new RoutedEventHandler(delegate { CopySelected(); });
         m.Items.Add(miCopy);
         MenuItem miAll = new MenuItem { Header = "全选 (Ctrl+A)" };
-        miAll.Click += new RoutedEventHandler(delegate { logList.SelectAll(); });
+        miAll.Click += new RoutedEventHandler(delegate { rtb.SelectAll(); });
         m.Items.Add(miAll);
         MenuItem miFind = new MenuItem { Header = "查找 (Ctrl+F)" };
         miFind.Click += new RoutedEventHandler(delegate { ShowFind(); });
@@ -1143,6 +1281,7 @@ public class MainWindow : BaseWin
         Grid.SetColumn(tbClock, 5); g.Children.Add(tbClock);
         tbVer = T("RTTStamp v" + UiUtil.AppVersion(), tc.TextSub, 12);
         tbVer.Margin = new Thickness(16, 0, 0, 0); Grid.SetColumn(tbVer, 6); g.Children.Add(tbVer);
+        stBorder = b;
         b.Child = g;
         return b;
     }
@@ -1151,6 +1290,19 @@ public class MainWindow : BaseWin
     void ApplyTheme()
     {
         if (rootBorder == null) return;
+        tc = ThemeColors.Get(S.Theme);
+        tcLog = tc;
+        // 同步动态资源（输入框/下拉框/复选框的样式跟随主题）
+        Application.Current.Resources["Ctrl.Bg"] = tc.CtrlBg;
+        Application.Current.Resources["Ctrl.Border"] = tc.CtrlBorder;
+        Application.Current.Resources["Ctrl.Fg"] = tc.CtrlFg;
+        Application.Current.Resources["Text.Main"] = tc.TextMain;
+        Application.Current.Resources["Text.Sub"] = tc.TextSub;
+        Application.Current.Resources["Hover.Bg"] = tc.HoverBg;
+        Application.Current.Resources["Card.Bg"] = tc.CardBg;
+        Application.Current.Resources["Card.Border"] = tc.CardBorder;
+        Application.Current.Resources["Accent"] = tc.Accent;
+        Application.Current.Resources["Sel.Bg"] = tc.SelBg;
         rootBorder.Background = tc.WinBg;
         rootBorder.BorderBrush = tc.CardBorder;
         if (titleBar != null)
@@ -1164,36 +1316,72 @@ public class MainWindow : BaseWin
                     if (t2 != null && (string)t2.Tag == "title") t2.Foreground = tc.TextMain;
                 }
             }
-        ApplyCardTheme();
+        // 日志容器（深浅主题只作用于日志显示区）
+        if (logBorder != null) { logBorder.Background = tcLog.LogBg; logBorder.BorderBrush = tcLog.LogBorder; }
+        if (stBorder != null) stBorder.BorderBrush = tc.CardBorder;
+        if (rtb != null) { rtb.Background = tcLog.LogBg; rtb.Foreground = tcLog.TextMain; rtb.SelectionBrush = tcLog.Accent; }
+        // 各行标签
+        foreach (Label l in new Label[] { lblDev, lblIf2, lblSpeed, lblTs2, lblDirTip, lblFindTip, lblUsb, lblIp, lblCh })
+            if (l != null) l.Foreground = tc.TextSub;
+        // 复选框
+        foreach (CheckBox c in new CheckBox[] { chkAutoRe, chkAdv, chkAnsi, chkScroll, chkRealtime })
+            if (c != null) c.Foreground = tc.TextMain;
+        // 次要药丸按钮
+        foreach (Button b in new Button[] { btnClear, btnExport, btnFind, btnBrowseDir })
+            if (b != null) { b.Background = tc.CardBg; b.Foreground = tc.TextMain; b.BorderBrush = tc.CardBorder; }
+        // 导航按钮
+        foreach (Button b in new Button[] { btnSettings, btnKeys, btnAbout })
+            if (b != null) { b.Background = tc.NavBtnBg; b.Foreground = tc.NavBtnFg; b.BorderBrush = tc.NavBtnBorder; }
+        // 状态栏文字
+        foreach (TextBlock t in new TextBlock[] { tbConn, tbDll, tbBytes, tbLines, tbClock, tbVer })
+            if (t != null) t.Foreground = tc.TextSub;
         RedrawAll();
-    }
-
-    void ApplyCardTheme()
-    {
-        if (chkAutoRe == null) return;
-        chkAutoRe.Foreground = tc.TextMain; chkAdv.Foreground = tc.TextMain;
-        chkAnsi.Foreground = tc.TextMain; chkScroll.Foreground = tc.TextMain;
-        chkRealtime.Foreground = tc.TextMain;
-        lblUsb.Foreground = tc.TextSub; lblIp.Foreground = tc.TextSub; lblCh.Foreground = tc.TextSub;
     }
 
     void RedrawAll()
     {
-        if (logList == null) return;
-        logList.Items.Clear();
-        object lr = null;
-        foreach (Msg m in session)
-        {
-            LogRow r = MakeRow(m);
-            logList.Items.Add(r);
-            lr = r;
-        }
-        lastRow = lr;
-        if (logList.Items.Count > 0 && chkScroll.IsChecked == true)
-            logList.ScrollIntoView(logList.Items[logList.Items.Count - 1]);
+        if (rtb == null) return;
+        rtb.Document.Blocks.Clear();
+        foreach (Msg m in session) rtb.Document.Blocks.Add(MakeParagraph(m));
+        if (chkScroll.IsChecked == true) rtb.ScrollToEnd();
     }
 
     // ---------- J-Link 连接与后台读取 ----------
+    // 连接中修改参数也实时同步到工作快照：剥离ANSI/自动重连立即生效，
+    // 设备/接口/速率/通道/序列号/IP 在断线重连（自动或手动）时生效
+    void SyncWorkerParams()
+    {
+        if (worker == null || !worker.IsAlive) return;
+        int sp, ch;
+        if (!int.TryParse(cmbSpeed.Text.Trim(), out sp) || sp <= 0) sp = 4000;
+        if (!int.TryParse(txtChannel.Text.Trim(), out ch) || ch < 0) ch = 0;
+        wDev = cmbDevice.Text.Trim();
+        string ifSel = cmbIf.SelectedItem as string;
+        if (ifSel == "SWD" || ifSel == "JTAG") wIf = ifSel;
+        wSpeed = sp; wCh = ch;
+        wUsb = txtUsb.Text.Trim(); wIp = txtIp.Text.Trim();
+        wAutoRe = chkAutoRe.IsChecked == true;
+        wStripAnsi = chkAnsi.IsChecked == true;
+    }
+
+    void HookLiveParams()
+    {
+        RoutedEventHandler re = new RoutedEventHandler(delegate { SyncWorkerParams(); });
+        SelectionChangedEventHandler se = new SelectionChangedEventHandler(delegate { SyncWorkerParams(); });
+        EventHandler te = new EventHandler(delegate { SyncWorkerParams(); });
+        System.Windows.Controls.TextChangedEventHandler tce = new System.Windows.Controls.TextChangedEventHandler(delegate { SyncWorkerParams(); });
+        // 可编辑下拉框的文本变化经内部 TextBox 冒泡上来的 TextChanged 路由事件捕获
+        cmbDevice.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent, tce);
+        cmbDevice.SelectionChanged += se;
+        cmbIf.SelectionChanged += se;
+        cmbSpeed.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent, tce);
+        txtChannel.TextChanged += tce;
+        txtUsb.TextChanged += tce;
+        txtIp.TextChanged += tce;
+        chkAutoRe.Checked += re; chkAutoRe.Unchecked += re;
+        chkAnsi.Checked += re; chkAnsi.Unchecked += re;
+    }
+
     void PushSys(string text)
     {
         Msg m = new Msg(); m.Ts = DateTime.Now; m.Text = text; m.Sys = true;
@@ -1233,7 +1421,6 @@ public class MainWindow : BaseWin
         worker.IsBackground = true;
         worker.Start();
 
-        SetInputs(false);
         btnConnect.Content = DisconnectText;
         btnConnect.Background = BrStop;
     }
@@ -1266,13 +1453,6 @@ public class MainWindow : BaseWin
         }
     }
 
-    void SetInputs(bool on)
-    {
-        cmbDevice.IsEnabled = on; cmbIf.IsEnabled = on; cmbSpeed.IsEnabled = on;
-        txtUsb.IsEnabled = on; txtIp.IsEnabled = on; txtChannel.IsEnabled = on;
-        chkAutoRe.IsEnabled = on; chkAnsi.IsEnabled = on;
-    }
-
     void ReadSettingsFromUI()
     {
         int sp, ch;
@@ -1288,7 +1468,7 @@ public class MainWindow : BaseWin
         S.AutoScroll = chkScroll.IsChecked == true;
         S.RealtimeOn = chkRealtime.IsChecked == true;
         S.TsFormat = cmbTs.SelectedIndex;
-        S.SaveDir = txtDir.Text.Trim();
+        // 目录以 设置→日志设置 里的配置为准，工具栏路径仅本会话使用，不写回配置
     }
 
     void WorkerRun()
@@ -1409,49 +1589,41 @@ public class MainWindow : BaseWin
     }
 
     // ---------- 5. 日志缓存与处理 ----------
-    LogRow MakeRow(Msg m)
+    Paragraph MakeParagraph(Msg m)
     {
-        LogRow r = new LogRow();
-        r.TsText = "[" + FormatTs(m.Ts) + "] ";
-        r.TsBrush = tc.TsBrush;
+        Paragraph p = new Paragraph();
+        p.Margin = new Thickness(0);
         if (m.Sys)
         {
-            r.TagText = "";
-            r.TagBrush = tc.SysBrush;
-            r.BodyText = m.Text;
-            r.BodyBrush = tc.SysBrush;
+            p.Inlines.Add(new Run("[" + FormatTs(m.Ts) + "]  ") { Foreground = tcLog.TsBrush });
+            p.Inlines.Add(new Run(m.Text) { Foreground = tcLog.SysBrush });
+            return p;
         }
-        else
-        {
-            int kind = UiUtil.LevelKindOf(m.Text);
-            r.TagText = UiUtil.LevelTag(kind).Length > 0 ? UiUtil.LevelTag(kind) + "  " : "";
-            Brush kbr = tc.TextMain;
-            if (kind == 1) kbr = tc.InfoBrush;
-            else if (kind == 2) kbr = tc.DebugBrush;
-            else if (kind == 3) kbr = tc.WarnBrush;
-            else if (kind == 4) kbr = tc.ErrorBrush;
-            r.TagBrush = kbr;
-            r.BodyText = m.Text;
-            r.BodyBrush = kind == 0 ? tc.TextMain : kbr;
-        }
-        r.Raw = "[" + FormatTs(m.Ts) + "] " + m.Text;
-        return r;
+        int kind = UiUtil.LevelKindOf(m.Text);
+        string tag = UiUtil.LevelTag(kind);
+        Brush kbr = tcLog.TextMain;
+        if (kind == 1) kbr = tcLog.InfoBrush;
+        else if (kind == 2) kbr = tcLog.DebugBrush;
+        else if (kind == 3) kbr = tcLog.WarnBrush;
+        else if (kind == 4) kbr = tcLog.ErrorBrush;
+        p.Inlines.Add(new Run("[" + FormatTs(m.Ts) + "]  ") { Foreground = tcLog.TsBrush });
+        if (tag.Length > 0) p.Inlines.Add(new Run(tag + "  ") { Foreground = kbr, FontWeight = FontWeights.Bold });
+        p.Inlines.Add(new Run(m.Text) { Foreground = kind == 0 ? tcLog.TextMain : kbr });
+        return p;
     }
 
     public void OnTick(object sender, EventArgs e)
     {
         Msg m;
-        bool stick = chkScroll.IsChecked == true || atBottom;
+        bool stick = chkScroll.IsChecked == true || rtbAtBottom();
         while (q.TryDequeue(out m))
         {
-            LogRow r = MakeRow(m);
-            logList.Items.Add(r);
-            lastRow = r;
+            rtb.Document.Blocks.Add(MakeParagraph(m));
             session.Add(m);
             if (session.Count > 100000)
             {
                 session.RemoveRange(0, 20000);
-                for (int i = 0; i < 20000; i++) logList.Items.RemoveAt(0);
+                TrimDoc(20000);
             }
             if (fileWriter != null)
             {
@@ -1459,7 +1631,7 @@ public class MainWindow : BaseWin
                 catch { fileWriter = null; }
             }
         }
-        if (stick && lastRow != null) logList.ScrollIntoView(lastRow);
+        if (stick) rtb.ScrollToEnd();
 
         // worker 退出检测
         string btnText = btnConnect.Content as string;
@@ -1468,7 +1640,6 @@ public class MainWindow : BaseWin
             worker = null;
             btnConnect.Content = ConnectText;
             btnConnect.Background = BrOk;
-            SetInputs(true);
             CloseWriter();
         }
         // 状态栏
@@ -1499,9 +1670,8 @@ public class MainWindow : BaseWin
 
     void ClearLog()
     {
-        logList.Items.Clear();
+        rtb.Document.Blocks.Clear();
         session.Clear();
-        lastRow = null;
     }
 
     void ExportLog()
@@ -1557,7 +1727,7 @@ public class MainWindow : BaseWin
     {
         findBar.Visibility = Visibility.Collapsed;
         Keyboard.ClearFocus();
-        logList.Focus();
+        rtb.Focus();
     }
 
     void FindNext(int dir, CheckBox caseBox)
@@ -1567,7 +1737,7 @@ public class MainWindow : BaseWin
         StringComparison cmp = caseBox != null && caseBox.IsChecked == true
             ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
         if (session.Count == 0) { lblFindMsg.Content = "没有日志"; return; }
-        int cur = lbSelectedIndex();
+        int cur = findAnchorIdx;
         int found = -1;
         if (dir > 0)
         {
@@ -1587,46 +1757,55 @@ public class MainWindow : BaseWin
         }
         if (found < 0) { lblFindMsg.Content = "未找到: " + needle; return; }
         lblFindMsg.Content = "";
-        SelectRowIndex(found);
+        SelectParagraph(found);
     }
 
-    int lbSelectedIndex()
+    // 选中第 i 条日志所在段落
+    void SelectParagraph(int i)
     {
-        if (lbSelectedItem() == null) return -1;
-        int i = 0;
-        foreach (object o in logList.Items)
+        int k = 0;
+        foreach (Block blk in rtb.Document.Blocks)
         {
-            if (o == lbSelectedItem()) return i;
-            i++;
+            if (k == i)
+            {
+                Paragraph pp = blk as Paragraph;
+                if (pp != null) rtb.Selection.Select(pp.ContentStart, pp.ContentEnd);
+                break;
+            }
+            k++;
         }
-        return -1;
+        rtb.ScrollToEnd();
     }
 
-    object lbSelectedItem() { return logList.SelectedItem; }
-
-    void SelectRowIndex(int i)
+    // 无选中时复制全部
+    void TrimDoc(int n)
     {
-        if (i < 0 || i >= logList.Items.Count) return;
-        object o = logList.Items[i];
-        logList.SelectedItem = o;
-        logList.ScrollIntoView(o);
+        for (int i = 0; i < n && rtb.Document.Blocks.Count > 0; i++)
+            rtb.Document.Blocks.Remove(rtb.Document.Blocks.FirstBlock);
     }
+
+    bool rtbAtBottom()
+    {
+        if (!rtb.IsLoaded) return true;
+        return rtb.VerticalOffset + rtb.ViewportHeight >= rtb.ExtentHeight - 6;
+    }
+
 
     void CopySelected()
     {
-        StringBuilder sb = new StringBuilder();
-        foreach (LogRow r in logList.SelectedItems) sb.AppendLine(r.Raw);
-        if (sb.Length == 0) return;
-        try { Clipboard.SetText(sb.ToString()); } catch { }
+        string t = rtb.Selection.Text;
+        if (string.IsNullOrEmpty(t))
+            t = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd).Text; // 无选中时复制全部
+        if (t.Length > 0) { try { Clipboard.SetText(t); } catch { } }
     }
 
-    void ZoomFont(int delta) { SetLogFont(logList.FontSize + delta); }
+    void ZoomFont(int delta) { SetLogFont(rtb.Document.FontSize + delta); }
 
     void SetLogFont(double sz)
     {
         if (sz < 6) sz = 6;
         if (sz > 30) sz = 30;
-        logList.FontSize = sz;
+        rtb.Document.FontSize = sz;
         S.FontSize = (float)sz;
     }
 
@@ -1634,14 +1813,9 @@ public class MainWindow : BaseWin
     {
         if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
         {
-            SetLogFont(logList.FontSize + (e.Delta > 0 ? 1 : -1));
+            SetLogFont(rtb.Document.FontSize + (e.Delta > 0 ? 1 : -1));
             e.Handled = true;
         }
-    }
-
-    void OnLogScroll(object sender, ScrollChangedEventArgs e)
-    {
-        atBottom = e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight - 4;
     }
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -1691,17 +1865,15 @@ public class MainWindow : BaseWin
         chkRealtime.IsChecked = S.RealtimeOn;
         txtDir.Text = S.EffectiveSaveDir();
         cmbTs.SelectedIndex = Math.Max(0, Math.Min(2, S.TsFormat));
-        bool themeChanged = (tc.Dark != (S.Theme == 1));
         SetLogFont(S.FontSize);
-        if (themeChanged) { tc = ThemeColors.Get(S.Theme); ApplyTheme(); }
-        else RedrawAll();
+        ApplyTheme(); // 全量应用主题（界面 + 日志区）
         S.Save();
     }
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
         ReadSettingsFromUI();
-        S.FontSize = (float)logList.FontSize;
+        S.FontSize = (float)rtb.Document.FontSize;
         S.Save();
         stopReq = true;
         if (worker != null && worker.IsAlive) worker.Join(800);
@@ -1731,7 +1903,7 @@ public class SettingsWindow : BaseWin
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ApplyChrome(this);
         Icon = MakeAppIcon();
-        ThemeColors t = ThemeColors.Get(s.Theme);
+        ThemeColors t = ThemeColors.Get(S.Theme); // 跟随主题
 
         root = new Border();
         root.CornerRadius = new CornerRadius(10);
@@ -1775,6 +1947,7 @@ public class SettingsWindow : BaseWin
         lvCat.SelectedIndex = 0;
         lvCat.BorderThickness = new Thickness(0);
         lvCat.Background = Brushes.Transparent;
+        lvCat.Foreground = t.TextMain;
         Style navItem = new Style(typeof(ListBoxItem));
         navItem.Setters.Add(new Setter(ListBoxItem.PaddingProperty, new Thickness(12, 7, 12, 7)));
         lvCat.ItemContainerStyle = navItem;
@@ -1864,7 +2037,7 @@ public class SettingsWindow : BaseWin
         p.Children.Add(row1);
 
         StackPanel row2 = HRow(6);
-        Label hint = L("路径修改后需要重启 RTTStamp 才能生效。", Frozen(0, 102, 180), 12);
+        Label hint = L("路径修改后需要重启 RTTStamp 才能生效。", t.Accent, 12);
         row2.Children.Add(hint);
         p.Children.Add(row2);
         UpdateDetectLabel();
@@ -1918,7 +2091,7 @@ public class SettingsWindow : BaseWin
         row1.Children.Add(txtFont);
         p.Children.Add(row1);
         StackPanel row2 = HRow(14);
-        row2.Children.Add(L("主题:", t.TextSub, 12));
+        row2.Children.Add(L("日志区配色:", t.TextSub, 12));
         cmbTheme = new ComboBox { Width = 120, Margin = new Thickness(8, 0, 0, 0) };
         cmbTheme.Items.Add("浅色"); cmbTheme.Items.Add("深色");
         cmbTheme.SelectedIndex = S.Theme == 1 ? 1 : 0;
@@ -2000,7 +2173,7 @@ public class ShortcutsWindow : BaseWin
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ApplyChrome(this);
         Icon = MakeAppIcon();
-        ThemeColors t = ThemeColors.Get(SettingsLoadTheme());
+        ThemeColors t = ThemeColors.Get(SettingsLoadTheme()); // 跟随主题
 
         Border root = new Border();
         root.CornerRadius = new CornerRadius(10);
@@ -2067,7 +2240,7 @@ public class ShortcutsWindow : BaseWin
 
     static void AddGroup(StackPanel p, string text, ThemeColors t)
     {
-        TextBlock tb = T(text, Frozen(0, 102, 180), 12, null, true);
+        TextBlock tb = T(text, t.Accent, 12, null, true);
         tb.Margin = new Thickness(0, 10, 0, 2);
         p.Children.Add(tb);
     }
@@ -2101,7 +2274,7 @@ public class AboutWindow : BaseWin
         ApplyChrome(this);
         Icon = MakeAppIcon();
         Settings s0 = Settings.Load();
-        ThemeColors t = ThemeColors.Get(s0.Theme);
+        ThemeColors t = ThemeColors.Get(s0.Theme); // 跟随主题
 
         Border root = new Border();
         root.CornerRadius = new CornerRadius(10);
@@ -2143,7 +2316,7 @@ public class AboutWindow : BaseWin
         head.Children.Add(logo);
         StackPanel names = new StackPanel { Margin = new Thickness(14, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         names.Children.Add(T("RTTStamp", t.TextMain, 22, null, true));
-        TextBlock vt = T("v" + UiUtil.AppVersion(), Frozen(0, 102, 180), 15, null, true);
+        TextBlock vt = T("v" + UiUtil.AppVersion(), t.Accent, 15, null, true);
         vt.Margin = new Thickness(0, 2, 0, 0);
         names.Children.Add(vt);
         head.Children.Add(names);
