@@ -1,0 +1,11 @@
+# 个人配置（含本机 J-Link 路径等）
+RTTStamp.ini
+RTTStamp_*.ini
+
+# 编译产物
+*.exe
+*.pdb
+
+# 日志输出
+*.log
+logs/
