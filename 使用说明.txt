@@ -1,0 +1,31 @@
+RTTStamp 使用说明
+==================
+
+【这个工具是干什么的】
+通过 J-Link 调试器实时查看单片机 RTT 日志，每行日志前面自动加上电脑时间戳。
+
+【使用前提】
+1. Windows 10 / 11（系统自带运行环境，无需安装其他软件）
+2. 电脑已安装 SEGGER J-Link 驱动软件
+   （装过 Keil / J-Link RTT Viewer 的电脑一般都有；没有的话到
+   https://www.segger.com/downloads/jlink 下载
+   "J-Link Software and Documentation Pack" 安装即可）
+
+【使用步骤】
+1. J-Link 插电脑，连接目标板并上电
+2. 双击 RTTStamp.exe
+3. 首次运行：
+   - "设备"栏选择或输入你的芯片型号（如 GD32F103CBT6）
+   - 接口一般 SWD、速率默认 4000 即可
+4. 点绿色「▶ 连接」按钮，日志开始实时滚动，每行前面是电脑时间
+5. 想留档：勾选「实时保存」或点「保存日志」，文件在 logs\ 文件夹里
+
+【常用快捷键】
+Ctrl+F 查找    Ctrl+S 保存日志    Ctrl+L 清空    Ctrl+滚轮 调字体
+
+【常见问题】
+- 提示"未找到 J-Link 安装目录"：电脑没装 J-Link 驱动，
+  装好后重启本工具；或按弹窗提示手动选择 JLink_x64.dll 所在目录
+- 点连接提示失败：检查 J-Link 是否插好、目标板是否上电、
+  调试口接线是否正确（TX/RX 不需要接，RTT 走调试口）
+- 和 JLinkRTTViewer/Keil 不能同时连同一个 J-Link，一次只能一个软件用
