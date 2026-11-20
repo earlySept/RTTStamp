@@ -1226,7 +1226,7 @@ public class MainWindow : BaseWin
         miFind.Click += new RoutedEventHandler(delegate { ShowFind(); });
         m.Items.Add(miFind);
         m.Items.Add(new Separator());
-        MenuItem miClear = new MenuItem { Header = "清空 (Ctrl+L)" };
+        MenuItem miClear = new MenuItem { Header = "清空 (Ctrl+L / Alt+R)" };
         miClear.Click += new RoutedEventHandler(delegate { ClearLog(); });
         m.Items.Add(miClear);
         MenuItem miSave = new MenuItem { Header = "保存日志 (Ctrl+S)" };
@@ -1822,21 +1822,38 @@ public class MainWindow : BaseWin
     {
         bool ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
         bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
-        if (findBar.Visibility == Visibility.Visible && e.Key == Key.Escape)
+        bool alt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
+        Key k = e.Key == Key.System ? e.SystemKey : e.Key; // 按住 Alt 时 e.Key 是 Key.System，真实按键在 SystemKey
+        if (findBar.Visibility == Visibility.Visible && k == Key.Escape)
         {
             HideFind(); e.Handled = true; base.OnPreviewKeyDown(e); return;
         }
-        if (findBar.Visibility == Visibility.Visible && e.Key == Key.Enter && txtFind.IsKeyboardFocused)
+        if (findBar.Visibility == Visibility.Visible && txtFind.IsKeyboardFocused && k == Key.Enter)
         {
-            FindNext(1, FindCaseBox(findBar)); e.Handled = true; base.OnPreviewKeyDown(e); return;
+            FindNext(shift ? -1 : 1, FindCaseBox(findBar)); e.Handled = true; base.OnPreviewKeyDown(e); return;
         }
-        if (ctrl && e.Key == Key.F) { ShowFind(); e.Handled = true; }
-        else if (ctrl && e.Key == Key.L) { ClearLog(); e.Handled = true; }
-        else if (ctrl && e.Key == Key.S) { ExportLog(); e.Handled = true; }
-        else if (e.Key == Key.F3) { FindNext(shift ? -1 : 1, FindCaseBox(findBar)); e.Handled = true; }
-        else if (ctrl && (e.Key == Key.OemPlus || e.Key == Key.Add)) { ZoomFont(1); e.Handled = true; }
-        else if (ctrl && (e.Key == Key.OemMinus || e.Key == Key.Subtract)) { ZoomFont(-1); e.Handled = true; }
-        else if (ctrl && (e.Key == Key.D0 || e.Key == Key.NumPad0)) { SetLogFont(13); e.Handled = true; }
+        // F2 连接 / F3 断开
+        if (k == Key.F2)
+        {
+            if (worker == null || !worker.IsAlive) StartWorker();
+            e.Handled = true; base.OnPreviewKeyDown(e); return;
+        }
+        if (k == Key.F3)
+        {
+            if (worker != null && worker.IsAlive)
+            {
+                stopReq = true;
+                workerStatus = "断开中...";
+                btnConnect.Content = "断开中...";
+            }
+            e.Handled = true; base.OnPreviewKeyDown(e); return;
+        }
+        if (ctrl && k == Key.F) { ShowFind(); e.Handled = true; }
+        else if ((ctrl && k == Key.L) || (alt && k == Key.R)) { ClearLog(); e.Handled = true; }
+        else if (ctrl && k == Key.S) { ExportLog(); e.Handled = true; }
+        else if (ctrl && (k == Key.OemPlus || k == Key.Add)) { ZoomFont(1); e.Handled = true; }
+        else if (ctrl && (k == Key.OemMinus || k == Key.Subtract)) { ZoomFont(-1); e.Handled = true; }
+        else if (ctrl && (k == Key.D0 || k == Key.NumPad0)) { SetLogFont(13); e.Handled = true; }
         base.OnPreviewKeyDown(e);
     }
 
@@ -2206,13 +2223,16 @@ public class ShortcutsWindow : BaseWin
         Grid.SetRow(title, 0); g.Children.Add(title);
 
         StackPanel body = new StackPanel { Margin = new Thickness(18, 6, 18, 4) };
+        AddGroup(body, "连接操作", t);
+        AddRow(body, "连接", "F2", t);
+        AddRow(body, "断开连接", "F3", t);
         AddGroup(body, "日志操作", t);
-        AddRow(body, "清空日志", "Ctrl + L", t);
+        AddRow(body, "清空日志", "Ctrl + L / Alt + R", t);
         AddRow(body, "保存日志", "Ctrl + S", t);
         AddGroup(body, "查找操作", t);
         AddRow(body, "打开查找", "Ctrl + F", t);
-        AddRow(body, "查找下一个", "F3", t);
-        AddRow(body, "查找上一个", "Shift + F3", t);
+        AddRow(body, "查找下一个", "Enter（查找框内）", t);
+        AddRow(body, "查找上一个", "Shift + Enter", t);
         AddRow(body, "关闭查找", "Esc", t);
         AddGroup(body, "显示操作", t);
         AddRow(body, "增大 / 减小字体", "Ctrl + +/− 或 Ctrl + 滚轮", t);

@@ -57,11 +57,13 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe ^
 
 | 功能 | 快捷键 |
 |---|---|
+| 连接 | `F2` |
+| 断开连接 | `F3` |
 | 打开查找 | `Ctrl + F` |
-| 查找下一个 / 上一个 | `F3` / `Shift + F3` |
+| 查找下一个 / 上一个 | `Enter` / `Shift + Enter`（查找框内） |
 | 关闭查找 | `Esc` |
 | 保存日志 | `Ctrl + S` |
-| 清空日志 | `Ctrl + L` |
+| 清空日志 | `Ctrl + L` 或 `Alt + R` |
 | 字体缩放 | `Ctrl + 滚轮` 或 `Ctrl + +/-`，`Ctrl + 0` 复位 |
 | 复制 / 全选 | `Ctrl + C` / `Ctrl + A` |
 
